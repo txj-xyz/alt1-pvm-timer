@@ -1,6 +1,6 @@
 {
-	"appName": "Jank Autosplitter",
-	"description": "Track split times with LiveSplit integration.",
+	"appName": "PVM Kill Timer",
+	"description": "Track kill/split times with LiveSplit integration.",
 	"appUrl": "./index.html",
 	"configUrl": "./appconfig.json",
 	"iconUrl": "./Icon.png",
