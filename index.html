@@ -6,13 +6,13 @@
 	<link rel="stylesheet" href="https://use.typekit.net/oov2wcw.css" />
 	<link rel="stylesheet" href="style.css" />
 	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZJHC0EP7TG"></script>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHS1M36NJJ"></script>
 	<script>
   		window.dataLayer = window.dataLayer || [];
   		function gtag(){dataLayer.push(arguments);}
   		gtag('js', new Date());
 
-  		gtag('config', 'G-ZJHC0EP7TG');
+  		gtag('config', 'G-JHS1M36NJJ');
 	</script>
 </head>
 
@@ -45,8 +45,7 @@
 				<tr>
 					<th>#</th>
 					<th>Segment</th>
-					<th>Time</th>
-					<th>Clues/Hr</th>
+					<th>Kill Time</th>
 				</tr>
 			</thead>
 			<tbody class="splits"></tbody>
@@ -72,18 +71,7 @@
 									</select>
 								</td>
 							</tr>
-							<tr title="Overall clues/hr accounting for total duration and splits, or single clues/hr using only that segment duration">
-								<td>
-									<label for="clueshr-type">Clues/hr</label>
-								</td>
-								<td>
-									<select id="clueshr-type" class="nisdropdown">
-										<option value="overall">Overall</option>
-										<option value="single">Single</option>
-									</select>
-								</td>
-							</tr>
-							<tr title="Clue count to auto-stop at (0 to disable)">
+							<tr title="Kill count to auto-stop at (0 to disable)">
 								<td>
 									<label for="autostop">Auto-stop at</label>
 								</td>
@@ -91,15 +79,15 @@
 									<input id="autostop" class="nisinput" type="number" value="50" />
 								</td>
 							</tr>
-							<tr title="How many clues between each split (1 for every clue)">
+							<tr title="How many kills between each split (1 for every kill)">
 								<td>
-									<label for="splitat">Split at</label>
+									<label for="splitat">Split at Kill Count</label>
 								</td>
 								<td>
 									<input id="splitat" class="nisinput" type="number" value="1" />
 								</td>
 							</tr>
-							<tr title="Which chatbox to watch for clue solve messages, if multiple are detected">
+							<tr title="Which chatbox to watch for kill timer messages, if multiple are detected">
 								<td>
 									<label for="chat">Chatbox</label>
 								</td>
@@ -119,7 +107,7 @@
 							</tr>
 							<tr title="The regex for what chat messages to split on (timestamps automatically included)">
 								<td>
-									<label for="regex">Regex</label>
+									<label for="regex">Regex to Search</label>
 								</td>
 								<td>
 									<textarea id="regex" value class="nisinput" spellcheck="false" rows="6"></textarea>
@@ -139,8 +127,7 @@
 						<!-- <div class="nisbutton2 save">Save</div> -->
 					</div>
 					<div class="extra-links">
-						<a href="https://github.com/Californ1a" target="_blank">GitHub</a><span class="dot"> • </span>
-						<a href="https://github.com/Californ1a/alt1-jank-autosplitter" target="_blank">LiveSplit Setup</a>
+						<a href="https://github.com/txj-xyz" target="_blank">GitHub</a>
 					</div>
 				</div>
 			</div>
