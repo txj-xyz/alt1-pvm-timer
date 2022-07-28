@@ -26,7 +26,7 @@ const scrollBox = document.querySelector(".second");
 const defaultButton = document.querySelector(".default");
 let errorEle: HTMLElement = document.querySelector(".error");
 const regexTimestampStr = "\\[\\d{2}:\\d{2}:\\d{2}\\]";
-const regexStr = "Your (reward was stored in Charos|Charos Clue Carrier has placed)";
+const regexStr = "You cast out your net";
 let regex = new RegExp(`${regexTimestampStr} ${regexStr}`);
 let chatboxInterval;
 let timerAnim;
@@ -67,22 +67,6 @@ function closeSettings() {
 			if (reader) {
 				reader.readargs.colors[reader.readargs.colors.length-1] = a1lib.mixColor(c[0], c[1], c[2]);
 			}
-		} else if (setting.id === "clueshr-type") {
-			const ls = localStorage.getItem("clueshr-type");
-			if (ls !== null && ls !== "" && setting.value !== ls && splitsEle.children) {
-				const rows = splitsEle.children;
-				for (let i = 0; i < rows.length; i++) {
-					const clueshrTd = rows[i].children[3];
-					
-					const msDuration = splits[i] - startTime;
-					const segMsDur = (i === 0) ? splits[i] - startTime : splits[i] - splits[i-1];
-					const splitper = localStorage.getItem("splitat") || "1";
-					const actionsPerTime = (setting.value === "single") ? (+splitper)/segMsDur : actions/msDuration;
-					const [cluesHr, chrMs] = `${(actionsPerTime * (60 * 60 * 1000)).toFixed(2)}`.split(".");
-
-					clueshrTd.innerHTML = `${cluesHr}.<span class="miliseconds">${(chrMs)?chrMs:"00"}</span>`;
-				}
-			}
 		}
 		if (setting.type === "checkbox") {
 			localStorage.setItem(setting.id, setting.checked);
@@ -112,12 +96,6 @@ defaultButton.addEventListener("click", () => {
 		} else if (setting.id === "timer-type") {
 			setting.value = "overall";
 			localStorage.setItem("timer-type", "overall");
-		} else if (setting.id === "clueshr-type") {
-			setting.value = "overall";
-			localStorage.setItem("clueshr-type", "overall");
-		} else if (setting.id === "autostop") {
-			setting.value = "50";
-			localStorage.setItem("autostop", "50");
 		} else if (setting.id === "splitat") {
 			setting.value = "1";
 			localStorage.setItem("splitat", "1");
