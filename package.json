@@ -1,6 +1,6 @@
 {
-	"name": "alt1-jank-autosplitter",
-	"homepage": "https://Californ1a.github.io/alt1-jank-autosplitter",
+	"name": "alt1-pvm-timer",
+	"homepage": "https://txj-xyz.github.io/alt1-pvm-timer",
 	"version": "0.0.1",
 	"scripts": {
 		"predeploy": "npm run build",
