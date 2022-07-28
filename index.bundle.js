@@ -4292,9 +4292,6 @@ var __webpack_exports__ = {};
   !*** ./index.ts ***!
   \******************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "addTestButton": () => (/* binding */ addTestButton)
-/* harmony export */ });
 /* harmony import */ var _alt1_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @alt1/base */ "../node_modules/@alt1/base/dist/index.js");
 /* harmony import */ var _alt1_chatbox__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @alt1/chatbox */ "../node_modules/@alt1/chatbox/dist/index.js");
 //alt1 base libs, provides all the commonly used methods for image matching and capture
@@ -4333,11 +4330,10 @@ let startDate = new Date();
 let file;
 let actions = 1;
 let reader;
-let clueType = "";
 function closeSettings() {
     const settingsElements = document.querySelectorAll(".modal-content td:nth-child(even)");
     for (const { children: [setting] } of settingsElements) {
-        // console.log(setting.id, setting.value);
+        console.log(setting.id, setting.value);
         if (setting.id === "regex") {
             regex = new RegExp(`${regexTimestampStr} ${setting.value}`);
         }
@@ -4389,10 +4385,6 @@ defaultButton.addEventListener("click", () => {
                 reader.pos.mainbox = reader.pos.boxes[0];
                 showSelectedChat(reader.pos.mainbox);
             }
-        }
-        else if (setting.id === "livesplit") {
-            setting.checked = true;
-            localStorage.setItem("livesplit", "true");
         }
         else if (setting.id === "timer-type") {
             setting.value = "overall";
@@ -4451,19 +4443,7 @@ function openSettings() {
     if (!regexEle.value) {
         regexEle.value = regexStr;
     }
-    const livesplitEle = document.querySelector("#livesplit");
-    const ls = localStorage.getItem("livesplit");
-    if (ls === null || ls === "") {
-        livesplitEle.checked = true;
-    }
-    else if (ls === "false") {
-        livesplitEle.checked = false;
-    }
-    else {
-        livesplitEle.checked = true;
-    }
     setValue("timer-type", "overall");
-    setValue("clueshr-type", "overall");
     setValue("autostop", "50");
     setValue("splitat", "1");
     setValue("color", "#00ff00");
@@ -4505,7 +4485,6 @@ function clear() {
     splitsEle.innerHTML = "";
     timerEle.innerHTML = "0.<span class=\"miliseconds\">00</span>";
     splits = [];
-    writeLine("RESET");
 }
 function formatTime(value) {
     const seconds = (value / 1000) % 60;
@@ -4543,23 +4522,18 @@ function timer() {
     timerAnim = requestAnimationFrame(timer);
 }
 function split() {
-    writeLine(`SPLIT-${actions}`);
     const currentTime = (new Date()).getTime();
     const previous = splits[splits.length - 1] || startTime;
     splits.push(currentTime);
     const msDuration = currentTime - startTime;
     const time = formatTime(msDuration);
     const segMsDur = currentTime - previous;
-    const clueshrType = localStorage.getItem("clueshr-type") || "overall";
     const splitper = localStorage.getItem("splitat") || "1";
-    const actionsPerTime = (clueshrType === "single") ? (+splitper) / segMsDur : actions / msDuration;
-    const [cluesHr, chrMs] = `${(actionsPerTime * (60 * 60 * 1000)).toFixed(2)}`.split(".");
     const segmentTime = (previous) ? formatTime(segMsDur) : time;
     splitsEle.innerHTML += `<tr>
 		<td>${actions}</td>
 		<td>${segmentTime}</td>
 		<td>${time}</td>
-		<td>${cluesHr}.<span class="miliseconds">${(chrMs) ? chrMs : "00"}</span></td>
 	</tr>`;
     scrollBox.scrollTo({
         top: scrollBox.scrollHeight,
@@ -4572,15 +4546,6 @@ function split() {
         }
     }
 }
-function writeLine(line) {
-    if (file && localStorage.getItem("livesplit") === "true") {
-        file.createWriter((fileWriter) => {
-            fileWriter.seek(fileWriter.length);
-            const blob = new Blob([`${line}\r\n`], { type: "text/plain" });
-            fileWriter.write(blob);
-        }, onError);
-    }
-}
 function startTimer() {
     if (startTime !== 0) {
         clearInterval(chatboxInterval);
@@ -4591,7 +4556,6 @@ function startTimer() {
         return;
     }
     clear();
-    writeLine("START");
     startBtn.innerHTML = "Stop";
     startDate = new Date();
     startTime = startDate.getTime();
@@ -4675,7 +4639,6 @@ function capture() {
     }, 1000);
     let timestamps = new Set();
     function readChatbox() {
-        var _a;
         const opts = reader.read() || [];
         let chat = "";
         if (opts.length === 0)
@@ -4687,16 +4650,11 @@ function capture() {
         if (chat.trim().match(/^\[\d{2}:\d{2}:\d{2}\]$/g))
             return;
         // console.log(chat);
-        const clueType2 = chat.match(/Sealed clue scroll \((?<type>.{4,6})\)/);
-        if (((_a = clueType2 === null || clueType2 === void 0 ? void 0 : clueType2.groups) === null || _a === void 0 ? void 0 : _a.type) && clueType2.groups.type !== clueType) {
-            clueType = clueType2.groups.type;
-        }
-        const clueComplete = chat.match(regex);
-        // TODO: Auto-stop Alt1 in-app timer if got reward but clue carrier didn't place new clue (last clue finished)
-        if (!(clueComplete != null && clueComplete.length > -1))
+        const killComplete = chat.match(regex);
+        if (!(killComplete != null && killComplete.length > -1))
             return;
-        console.log(clueComplete);
-        const timestamp = clueComplete[0].match(/(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/);
+        console.log(killComplete);
+        const timestamp = killComplete[0].match(/(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/);
         if (!(startTime !== 0 && timestamp != null && timestamp.length > -1))
             return;
         if (timestamps.has(timestamp[0])) {
@@ -4704,7 +4662,7 @@ function capture() {
         }
         const time = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), +timestamp.groups.hour, +timestamp.groups.minute, +timestamp.groups.second);
         if (time.getTime() < startTime) {
-            return console.log("Clue too early");
+            return console.log("Kill too early");
         }
         const ls = localStorage.getItem("splitat") || "1";
         if (actions % parseInt(ls, 10) === 0) {
@@ -4724,15 +4682,6 @@ function setFile(fs) {
     truncate(fs);
     file = fs;
 }
-function onInitFs(fs) {
-    fs.root.getFile("info.txt", { create: false }, setFile, (e) => {
-        console.log("File does not exist, creating...");
-        fs.root.getFile("info.txt", { create: true }, setFile, onError);
-    });
-}
-if (localStorage.getItem("livesplit") !== "false") {
-    window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, onInitFs, onError);
-}
 function hexToRgb(hex) {
     return hex.match(/[A-Za-z0-9]{2}/g).map((v) => parseInt(v, 16));
 }
@@ -4745,22 +4694,9 @@ if (window.alt1) {
     if (!alt1.permissionPixel) {
         setError("Page is not installed as app or capture permission is not enabled");
     }
-    _alt1_base__WEBPACK_IMPORTED_MODULE_0__.on("alt1pressed", (e) => {
-        var _a;
-        const clue = e.text.match(/Sealed clue scroll \((?<type>.{4,6})\)/);
-        if ((_a = clue === null || clue === void 0 ? void 0 : clue.groups) === null || _a === void 0 ? void 0 : _a.type) {
-            clueType = clue.groups.type;
-            clear();
-            startTimer();
-        }
-    });
 }
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
-        const ls = localStorage.getItem("livesplit");
-        if (ls === "" || ls === null) {
-            localStorage.setItem("livesplit", "true");
-        }
         const color = localStorage.getItem("color");
         if (color === "" || color === null) {
             localStorage.setItem("color", "#00ff00");
@@ -4776,27 +4712,6 @@ document.addEventListener("readystatechange", () => {
         capture();
     }
 }, false);
-function addTestButton() {
-    const testBtn = document.querySelector(".test");
-    if (testBtn) {
-        return console.log("Test button already exists");
-    }
-    const th = document.createElement("th");
-    th.innerHTML = "<div class=\"nisbutton2 test\">Test</div>";
-    document.querySelector(".menu tr").appendChild(th);
-    th.children[0].addEventListener("click", test);
-}
-if (document.location.host !== "californ1a.github.io") {
-    addTestButton();
-}
-function test() {
-    if (!startTime) {
-        startTimer();
-        return;
-    }
-    split();
-    actions++;
-}
 
 })();
 
