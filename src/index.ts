@@ -349,7 +349,7 @@ function capture() {
 			a1lib.mixColor(c[0], c[1], c[2]), //green
 			//A1lib.mixColor(255, 165, 0), //Scavenging comps
 			//A1lib.mixColor(255, 0, 0), //Rare Mats
-			//A1lib.mixColor(67, 188, 188), //Ancient components
+			//A1lib.mixColor(67, 188, 188), //Ancient component
 		],
 	};
 
