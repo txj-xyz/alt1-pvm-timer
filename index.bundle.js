@@ -4327,7 +4327,6 @@ let splits = [];
 let lastTime = (new Date()).getTime();
 let startTime = 0;
 let startDate = new Date();
-let file;
 let actions = 1;
 let reader;
 function closeSettings() {
@@ -4607,39 +4606,37 @@ function capture() {
         return;
     }
     //Find all visible chatboxes on screen
-    // reader.find();
-    // reader.read();
+    reader.find();
+    reader.read();
     let findChat = setInterval(() => {
-        if (reader.pos === null) {
-            setError("Looking for chatbox");
-            reader.find();
+        clearInterval(findChat);
+        clearError();
+        reader.pos.boxes.map((box, i) => {
+            const chat = document.querySelector("#chat");
+            const value = btoa(JSON.stringify(box));
+            chat.innerHTML += `<option value=${value}>Chat ${i}</option>`;
+        });
+        const chat = localStorage.getItem("chat");
+        if (chat !== null && chat !== "") {
+            reader.pos.mainbox = reader.pos.boxes[+chat];
         }
         else {
-            clearInterval(findChat);
-            clearError();
-            reader.pos.boxes.map((box, i) => {
-                const chat = document.querySelector("#chat");
-                const value = btoa(JSON.stringify(box));
-                chat.innerHTML += `<option value=${value}>Chat ${i}</option>`;
-            });
-            const chat = localStorage.getItem("chat");
-            if (chat !== null && chat !== "") {
-                reader.pos.mainbox = reader.pos.boxes[+chat];
-            }
-            else {
-                //If multiple boxes are found, this will select the first, which should be the top-most chat box on the screen.
-                reader.pos.mainbox = reader.pos.boxes[0];
-            }
-            // console.log(reader);
-            showSelectedChat(reader.pos.mainbox);
-            chatboxInterval = setInterval(() => {
-                readChatbox();
-            }, 500);
+            //If multiple boxes are found, this will select the first, which should be the top-most chat box on the screen.
+            reader.pos.mainbox = reader.pos.boxes[0];
         }
+        // console.log(reader);
+        reader.find();
+        reader.read();
+        showSelectedChat(reader.pos.mainbox);
+        chatboxInterval = setInterval(() => {
+            readChatbox();
+        }, 500);
     }, 1000);
     let timestamps = new Set();
     function readChatbox() {
-        const opts = reader.read() || [];
+        var _a;
+        reader.find();
+        const opts = (_a = reader === null || reader === void 0 ? void 0 : reader.read()) !== null && _a !== void 0 ? _a : [];
         let chat = "";
         if (opts.length === 0)
             return;
@@ -4647,13 +4644,13 @@ function capture() {
         for (let a in opts) {
             chat += opts[a].text + " ";
         }
+        console.log(regex, chat, chat.match(regex));
         if (chat.trim().match(/^\[\d{2}:\d{2}:\d{2}\]$/g))
             return;
         // console.log(chat);
         const killComplete = chat.match(regex);
         if (!(killComplete != null && killComplete.length > -1))
             return;
-        console.log(killComplete);
         const timestamp = killComplete[0].match(/(?<hour>\d{2}):(?<minute>\d{2}):(?<second>\d{2})/);
         if (!(startTime !== 0 && timestamp != null && timestamp.length > -1))
             return;
@@ -4667,20 +4664,11 @@ function capture() {
         const ls = localStorage.getItem("splitat") || "1";
         if (actions % parseInt(ls, 10) === 0) {
             timestamps.add(timestamp[0]);
-            console.log("SPLIT!");
+            console.log("KILL DONE SPLIT!");
             split();
         }
         actions++;
     }
-}
-function truncate(fs) {
-    fs.createWriter((fileWriter) => {
-        fileWriter.truncate(0);
-    }, onError);
-}
-function setFile(fs) {
-    truncate(fs);
-    file = fs;
 }
 function hexToRgb(hex) {
     return hex.match(/[A-Za-z0-9]{2}/g).map((v) => parseInt(v, 16));
