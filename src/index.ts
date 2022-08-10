@@ -26,7 +26,7 @@ const scrollBox = document.querySelector(".second");
 const defaultButton = document.querySelector(".default");
 let errorEle: HTMLElement = document.querySelector(".error");
 const regexTimestampStr = "\\[\\d{2}:\\d{2}:\\d{2}\\]";
-const regexStr = "(Completion|time)";
+const regexStr = "Completion Time";
 let regex = new RegExp(`${regexTimestampStr} ${regexStr}`);
 let chatboxInterval;
 let timerAnim;
@@ -312,10 +312,10 @@ function capture() {
 	}
 	reader.readargs = {
 		colors: [
-			a1lib.mixColor(255, 255, 255), //white
+			// a1lib.mixColor(255, 255, 255), //white
 			a1lib.mixColor(c[0], c[1], c[2]), //green
-			//A1lib.mixColor(255, 165, 0), //Scavenging comps
-			//A1lib.mixColor(255, 0, 0), //Rare Mats
+			a1lib.mixColor(45, 185, 20), // Completion Time
+			a1lib.mixColor(30, 255, 0), // Recieved Drop
 			//A1lib.mixColor(67, 188, 188), //Ancient component
 		],
 	};
@@ -369,12 +369,11 @@ function capture() {
 		for (let a in opts) {
 			chat += opts[a].text + " ";
 		}
-
-		console.log(regex, chat, chat.match(regex))
+		// console.log(chat);
+		// console.log(chat.match(regex));
+		// console.log(regex);
 		
 		if (chat.trim().match(/^\[\d{2}:\d{2}:\d{2}\]$/g)) return;
-
-		// console.log(chat);
 
 		const killComplete = chat.match(regex);
 		if (!(killComplete != null && killComplete.length > -1)) return;
