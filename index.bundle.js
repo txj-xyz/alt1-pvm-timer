@@ -4320,18 +4320,18 @@ const defaultButton = document.querySelector(".default");
 let errorEle = document.querySelector(".error");
 const regexTimestampStr = "\\[\\d{2}:\\d{2}:\\d{2}\\]";
 const regexStr = "Completion Time|.*\\breceived\\b";
-let regex = new RegExp(`${regexTimestampStr} ${regexStr}`);
+let regex = new RegExp(`"\\[\\d{2}:\\d{2}:\\d{2}\\] Completion Time|.*\\breceived\\b`);
 let chatboxInterval;
 let timerAnim;
 let splits = [];
-let lastTime = (new Date()).getTime();
+let lastTime = new Date().getTime();
 let startTime = 0;
 let startDate = new Date();
 let actions = 1;
 let reader;
 function closeSettings() {
     const settingsElements = document.querySelectorAll(".modal-content td:nth-child(even)");
-    for (const { children: [setting] } of settingsElements) {
+    for (const { children: [setting], } of settingsElements) {
         console.log(setting.id, setting.value);
         if (setting.id === "regex") {
             regex = new RegExp(`${regexTimestampStr} ${setting.value}`);
@@ -4342,7 +4342,8 @@ function closeSettings() {
             if (chat !== null && chat !== "") {
                 const main = reader.pos.mainbox;
                 const box = JSON.parse(atob(chat));
-                if (main.rect.x !== box.rect.x || main.rect.y !== box.rect.y) { // not the same box
+                if (main.rect.x !== box.rect.x || main.rect.y !== box.rect.y) {
+                    // not the same box
                     reader.pos.mainbox = box;
                 }
             }
@@ -4358,7 +4359,8 @@ function closeSettings() {
         else if (setting.id === "color") {
             const c = hexToRgb(setting.value);
             if (reader) {
-                reader.readargs.colors[reader.readargs.colors.length - 1] = _alt1_base__WEBPACK_IMPORTED_MODULE_0__.mixColor(c[0], c[1], c[2]);
+                reader.readargs.colors[reader.readargs.colors.length - 1] =
+                    _alt1_base__WEBPACK_IMPORTED_MODULE_0__.mixColor(c[0], c[1], c[2]);
             }
         }
         if (setting.type === "checkbox") {
@@ -4373,7 +4375,7 @@ function closeSettings() {
 defaultButton.addEventListener("click", () => {
     localStorage.clear();
     const settingsElements = document.querySelectorAll(".modal-content td:nth-child(even)");
-    for (const { children: [setting] } of settingsElements) {
+    for (const { children: [setting], } of settingsElements) {
         if (setting.id === "regex") {
             setting.value = regexStr;
             regex = new RegExp(`${regexTimestampStr} ${setting.value}`);
@@ -4456,7 +4458,9 @@ function setError(message) {
     }
     errorEle.style.display = "block";
     errorEle.ariaLabel = message;
-    if (!window.alt1 || !((_a = window.alt1) === null || _a === void 0 ? void 0 : _a.permissionPixel) || !((_b = window.alt1) === null || _b === void 0 ? void 0 : _b.permissionOverlay)) {
+    if (!window.alt1 ||
+        !((_a = window.alt1) === null || _a === void 0 ? void 0 : _a.permissionPixel) ||
+        !((_b = window.alt1) === null || _b === void 0 ? void 0 : _b.permissionOverlay)) {
         errorEle.title = message;
     }
 }
@@ -4482,30 +4486,34 @@ function clear() {
     startDate = new Date();
     actions = 1;
     splitsEle.innerHTML = "";
-    timerEle.innerHTML = "0.<span class=\"miliseconds\">00</span>";
+    timerEle.innerHTML = '0.<span class="miliseconds">00</span>';
     splits = [];
 }
 function formatTime(value) {
     const seconds = (value / 1000) % 60;
     const minutes = Math.floor((value / (60 * 1000)) % 60);
     const hours = Math.floor((value / (60 * 60 * 1000)) % 24);
-    const secondsS = (seconds < 10 && (minutes >= 1 || hours >= 1)) ? `0${seconds}`.slice(0, 5) : `${seconds.toFixed(2)}`;
+    const secondsS = seconds < 10 && (minutes >= 1 || hours >= 1)
+        ? `0${seconds}`.slice(0, 5)
+        : `${seconds.toFixed(2)}`;
     const [sec, mil] = secondsS.split(".");
-    const minutesS = (minutes < 10 && hours >= 1) ? `0${minutes}`.slice(-2) : `${minutes}`.slice(-2);
+    const minutesS = minutes < 10 && hours >= 1
+        ? `0${minutes}`.slice(-2)
+        : `${minutes}`.slice(-2);
     const hoursS = `${hours}`.slice(-2);
     if (hours < 1 && minutes < 1) {
-        return `${sec}.<span class="miliseconds">${(mil) ? mil : "00"}</span>`;
+        return `${sec}.<span class="miliseconds">${mil ? mil : "00"}</span>`;
     }
     if (hours < 1) {
-        return `${minutesS}:${sec}.<span class="miliseconds">${(mil) ? mil : "00"}</span>`;
+        return `${minutesS}:${sec}.<span class="miliseconds">${mil ? mil : "00"}</span>`;
     }
-    return `${hoursS}:${minutesS}:${sec}.<span class="miliseconds">${(mil) ? mil : "00"}</span>`;
+    return `${hoursS}:${minutesS}:${sec}.<span class="miliseconds">${mil ? mil : "00"}</span>`;
 }
 function showTime(value) {
     timerEle.innerHTML = formatTime(value);
 }
 function timer() {
-    const currentTime = (new Date()).getTime();
+    const currentTime = new Date().getTime();
     if (currentTime - lastTime >= 50) {
         lastTime = currentTime;
         // numSeconds++;
@@ -4521,14 +4529,14 @@ function timer() {
     timerAnim = requestAnimationFrame(timer);
 }
 function split() {
-    const currentTime = (new Date()).getTime();
+    const currentTime = new Date().getTime();
     const previous = splits[splits.length - 1] || startTime;
     splits.push(currentTime);
     const msDuration = currentTime - startTime;
     const time = formatTime(msDuration);
     const segMsDur = currentTime - previous;
     const splitper = localStorage.getItem("splitat") || "1";
-    const segmentTime = (previous) ? formatTime(segMsDur) : time;
+    const segmentTime = previous ? formatTime(segMsDur) : time;
     splitsEle.innerHTML += `<tr>
 		<td>${actions}</td>
 		<td>${segmentTime}</td>
@@ -4536,7 +4544,7 @@ function split() {
 	</tr>`;
     scrollBox.scrollTo({
         top: scrollBox.scrollHeight,
-        behavior: "smooth"
+        behavior: "smooth",
     });
     const as = localStorage.getItem("autostop");
     if (as !== "" || as !== null) {
