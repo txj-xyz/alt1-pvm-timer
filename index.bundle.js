@@ -4319,7 +4319,7 @@ const scrollBox = document.querySelector(".second");
 const defaultButton = document.querySelector(".default");
 let errorEle = document.querySelector(".error");
 const regexTimestampStr = "\\[\\d{2}:\\d{2}:\\d{2}\\]";
-const regexStr = "Completion Time";
+const regexStr = "|(\\bCompletion\\b|\\breceived\\b)";
 let regex = new RegExp(`${regexTimestampStr} ${regexStr}`);
 let chatboxInterval;
 let timerAnim;
