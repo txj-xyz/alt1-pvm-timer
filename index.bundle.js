@@ -4319,7 +4319,7 @@ const scrollBox = document.querySelector(".second");
 const defaultButton = document.querySelector(".default");
 let errorEle = document.querySelector(".error");
 const regexTimestampStr = "\\[\\d{2}:\\d{2}:\\d{2}\\]";
-const regexStr = "|(\\bCompletion\\b|\\breceived\\b)";
+const regexStr = "Completion Time|.*\\breceived\\b";
 let regex = new RegExp(`${regexTimestampStr} ${regexStr}`);
 let chatboxInterval;
 let timerAnim;
@@ -4644,9 +4644,9 @@ function capture() {
         for (let a in opts) {
             chat += opts[a].text + " ";
         }
-        // console.log(chat);
-        // console.log(chat.match(regex));
-        // console.log(regex);
+        console.log(chat);
+        console.log(chat.match(regex));
+        console.log(regex);
         if (chat.trim().match(/^\[\d{2}:\d{2}:\d{2}\]$/g))
             return;
         const killComplete = chat.match(regex);
